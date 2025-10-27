@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C-MAPSS ERD - Entity-Relationship Diagram</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .note {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 C-MAPSS Turbofan Degradation Dataset</h1>
+        <h2>Entity-Relationship Diagram (M5 Conceptual Model)</h2>
+
+
+        <div class="mermaid">
+            erDiagram
+            DATASET {
+            string dataset_id PK "FD001, FD002, FD003, FD004"
+            string dataset_description "Human-readable description"
+            int conditions_count "1 or 6 operating regimes"
+            int fault_modes_count "1 or 2 degradation modes"
+            }
+
+            ENGINE_UNIT {
+            string global_unit_id PK "Composite: dataset_id + unit_id"
+            int unit_id "Within-dataset identifier (1-N)"
+            string dataset_id FK "References DATASET"
+            string dataset_type "train or test"
+            }
+
+            TIME_CYCLE {
+            string global_unit_id FK "References ENGINE_UNIT"
+            int time_cycles PK "Operational cycle number (1-N)"
+            float normalized_cycle "Scaled to [0,1] range"
+            }
+
+            SENSOR_MEASUREMENT {
+            string global_unit_id FK "References ENGINE_UNIT"
+            int time_cycles FK "References TIME_CYCLE"
+            float op_setting_1 "Operational setting 1"
+            float op_setting_2 "Operational setting 2"
+            float op_setting_3 "Operational setting 3"
+            float sensor_1 "Fan inlet temperature (°R)"
+            float sensor_2 "LPC outlet temperature (°R)"
+            float sensor_3 "HPC outlet temperature (°R)"
+            float sensor_4 "LPT outlet temperature (°R)"
+            float sensor_5 "Fan inlet Pressure (psia)"
+            float sensor_6 "bypass-duct pressure (psia)"
+            float sensor_7 "HPC outlet pressure (psia)"
+            float sensor_8 "Physical fan speed (rpm)"
+            float sensor_9 "Physical core speed (rpm)"
+            float sensor_10 "Engine pressure ratio (P50/P2)"
+            float sensor_11 "HPC outlet Static pressure (psia)"
+            float sensor_12 "Ratio of fuel flow to Ps30 (pps/psi)"
+            float sensor_13 "Corrected fan speed (rpm)"
+            float sensor_14 "Corrected core speed (rpm)"
+            float sensor_15 "Bypass Ratio"
+            float sensor_16 "Burner fuel-air ratio"
+            float sensor_17 "Bleed Enthalpy"
+            float sensor_18 "Required fan speed"
+            float sensor_19 "Required fan conversion speed"
+            float sensor_20 "High-pressure turbines Cool air flow"
+            float sensor_21 "Low-pressure turbines Cool air flow"
+            }
+
+            RUL_TARGET {
+            string global_unit_id PK "References ENGINE_UNIT"
+            int remaining_useful_life "Cycles until failure (test set only)"
+            }
+
+            DATASET ||--o{ ENGINE_UNIT : "contains (1 to many)"
+            ENGINE_UNIT ||--o{ TIME_CYCLE : "operates over (1 to many)"
+            ENGINE_UNIT ||--o{ SENSOR_MEASUREMENT : "generates (1 to many)"
+            TIME_CYCLE ||--|| SENSOR_MEASUREMENT : "captured at (1 to 1)"
+            ENGINE_UNIT ||--o| RUL_TARGET : "has target (0 or 1)"
+        </div>
+
+        <h2>📋 Relationship Explanations</h2>
+
+        <h3>1. DATASET → ENGINE_UNIT (One-to-Many)</h3>
+        <ul>
+            <li><strong>Cardinality:</strong> Each dataset contains multiple engine units</li>
+            <li><strong>Example:</strong> FD001 contains 100 training engines and 100 test engines</li>
+            <li><strong>Foreign Key:</strong> <code>ENGINE_UNIT.dataset_id</code> references
+                <code>DATASET.dataset_id</code>
+            </li>
+        </ul>
+
+        <h3>2. ENGINE_UNIT → TIME_CYCLE (One-to-Many)</h3>
+        <ul>
+            <li><strong>Cardinality:</strong> Each engine operates over multiple time cycles</li>
+            <li><strong>Example:</strong> Engine FD001_1 operates from cycle 1 to cycle 192</li>
+            <li><strong>Foreign Key:</strong> <code>TIME_CYCLE.global_unit_id</code> references
+                <code>ENGINE_UNIT.global_unit_id</code>
+            </li>
+        </ul>
+
+        <h3>3. ENGINE_UNIT → SENSOR_MEASUREMENT (One-to-Many)</h3>
+        <ul>
+            <li><strong>Cardinality:</strong> Each engine generates multiple sensor observations</li>
+            <li><strong>Example:</strong> Engine FD001_1 has 192 sensor measurement records (one per cycle)</li>
+            <li><strong>Foreign Key:</strong> <code>SENSOR_MEASUREMENT.global_unit_id</code> references
+                <code>ENGINE_UNIT.global_unit_id</code>
+            </li>
+        </ul>
+
+        <h3>4. TIME_CYCLE ↔ SENSOR_MEASUREMENT (One-to-One)</h3>
+        <ul>
+            <li><strong>Cardinality:</strong> Each time cycle has exactly one sensor measurement record</li>
+            <li><strong>Composite Key:</strong> <code>(global_unit_id, time_cycles)</code> uniquely identifies
+                observation</li>
+        </ul>
+
+        <h3>5. ENGINE_UNIT → RUL_TARGET (One-to-Zero-or-One)</h3>
+        <ul>
+            <li><strong>Cardinality:</strong> Each engine may have a RUL target value</li>
+            <li><strong>Example:</strong> Test engines have RUL values; training engines do not</li>
+            <li><strong>Foreign Key:</strong> <code>RUL_TARGET.global_unit_id</code> references
+                <code>ENGINE_UNIT.global_unit_id</code>
+            </li>
+        </ul>
+
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+outs:
+- md5: 0bc30a0149f3218fd0e0524292874906
+  size: 149576427
+  hash: md5
+  path: fact_table_transformed.csv

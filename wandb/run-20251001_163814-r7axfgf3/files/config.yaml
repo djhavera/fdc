@@ -1,0 +1,56 @@
+_wandb:
+    value:
+        cli_version: 0.22.1
+        e:
+            z91s2qbilnblmcfdc40oyyytatv0riat:
+                codePath: cmapss_fact_table_creation.ipynb
+                codePathLocal: cmapss_fact_table_creation.ipynb
+                cpu_count: 4
+                cpu_count_logical: 8
+                disk:
+                    /:
+                        total: "499963174912"
+                        used: "475446489088"
+                email: djhavera@yahoo.com
+                executable: /Users/davidhavera/CS598_FDC/.venv/bin/python
+                host: Davids-MacBook-Pro.local
+                memory:
+                    total: "34359738368"
+                os: macOS-15.6.1-x86_64-i386-64bit-Mach-O
+                program: /Users/davidhavera/CS598_FDC/cmapss_fact_table_creation.ipynb
+                python: CPython 3.13.1
+                root: /Users/davidhavera/CS598_FDC
+                startedAt: "2025-10-01T20:38:14.884726Z"
+                writerId: z91s2qbilnblmcfdc40oyyytatv0riat
+        m: []
+        python_version: 3.13.1
+        t:
+            "3":
+                - 2
+                - 13
+                - 15
+                - 16
+            "4": 3.13.1
+            "5": 0.22.1
+            "8":
+                - 1
+            "12": 0.22.1
+            "13": darwin-x86_64
+dataset:
+    value: C-MAPSS Turbofan Engine
+datasets_included:
+    value:
+        - FD001
+        - FD002
+        - FD003
+        - FD004
+feature_engineering:
+    value: true
+normalization_method:
+    value: Z-score within operational groups
+outlier_removal:
+    value: true
+total_records:
+    value: 265256
+total_units:
+    value: 1416

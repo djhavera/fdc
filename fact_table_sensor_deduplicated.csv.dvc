@@ -1,0 +1,5 @@
+outs:
+- md5: 9b250b9ba65bac3b39d81fb020873675
+  size: 59470416
+  hash: md5
+  path: fact_table_sensor_deduplicated.csv

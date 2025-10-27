@@ -1,0 +1,480 @@
+# C-MAPSS Turbofan Degradation Dataset Ontology
+# RDF Schema (RDFS) Vocabulary Definition
+# Created: October 20, 2025
+# Project: CS598 FDC Final Project
+# Module: M5 - Ontologies & Conceptual Modeling
+
+@prefix cmapss: <http://example.org/cmapss#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+################################################################
+# Ontology Metadata
+################################################################
+<http://example.org/cmapss#> a owl:Ontology ;
+    dc:title "C-MAPSS Turbofan Engine Degradation Ontology" ;
+    dc:description "Formal ontology for NASA's C-MAPSS (Commercial Modular Aero-Propulsion System Simulation) turbofan engine degradation dataset" ;
+    dc:creator "David Havera" ;
+    dc:date "2025-10-20" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    rdfs:comment "This ontology defines the conceptual schema for turbofan engine health monitoring data, including datasets, engine units, time cycles, sensor measurements, and operational settings." .
+
+################################################################
+# Classes (M5: Entity Types)
+################################################################
+
+cmapss:Dataset a rdfs:Class , owl:Class ;
+    rdfs:label "Dataset" ;
+    rdfs:comment "Represents one of the four C-MAPSS experimental datasets (FD001-FD004), each with different operating conditions and fault modes." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:EngineUnit a rdfs:Class , owl:Class ;
+    rdfs:label "Engine Unit" ;
+    rdfs:comment "Represents an individual turbofan engine unit undergoing run-to-failure simulation. Each engine belongs to exactly one dataset." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:TimeCycle a rdfs:Class , owl:Class ;
+    rdfs:label "Time Cycle" ;
+    rdfs:comment "Represents a discrete operational cycle in the engine's lifecycle. Each engine operates over multiple time cycles until failure." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:FactRecord a rdfs:Class , owl:Class ;
+    rdfs:label "Fact Record" ;
+    rdfs:comment "Represents a single observation in the fact table, capturing sensor readings and operational settings for one engine at one time cycle." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:SensorMeasurement a rdfs:Class , owl:Class ;
+    rdfs:label "Sensor Measurement" ;
+    rdfs:comment "Represents a collection of 21 sensor readings captured at a specific time cycle for a specific engine." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:SensorReading a rdfs:Class , owl:Class ;
+    rdfs:label "Sensor Reading" ;
+    rdfs:comment "Represents an individual sensor reading (e.g., temperature, pressure, speed) at a specific time cycle." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:OperationalSetting a rdfs:Class , owl:Class ;
+    rdfs:label "Operational Setting" ;
+    rdfs:comment "Represents a collection of 3 operational settings that define the engine's operating regime at a specific time cycle." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:OperatingSetting a rdfs:Class , owl:Class ;
+    rdfs:label "Operating Setting" ;
+    rdfs:comment "Represents an individual operational setting parameter (op_setting_1, op_setting_2, or op_setting_3)." ;
+    rdfs:subClassOf owl:Thing .
+
+cmapss:RULTarget a rdfs:Class , owl:Class ;
+    rdfs:label "Remaining Useful Life Target" ;
+    rdfs:comment "Represents the ground truth remaining useful life (RUL) value for test engines. Training engines do not have RUL targets." ;
+    rdfs:subClassOf owl:Thing .
+
+################################################################
+# Object Properties (M5: Relationships)
+################################################################
+
+cmapss:hasEngineUnit a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:Dataset ;
+    rdfs:range cmapss:EngineUnit ;
+    rdfs:label "has engine unit" ;
+    rdfs:comment "Relates a dataset to its constituent engine units. One dataset contains many engine units (1:M cardinality)." ;
+    owl:inverseOf cmapss:belongsToDataset .
+
+cmapss:belongsToDataset a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range cmapss:Dataset ;
+    rdfs:label "belongs to dataset" ;
+    rdfs:comment "Relates an engine unit to its parent dataset. Each engine belongs to exactly one dataset (M:1 cardinality)." ;
+    owl:inverseOf cmapss:hasEngineUnit .
+
+cmapss:hasTimeCycle a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range cmapss:TimeCycle ;
+    rdfs:label "has time cycle" ;
+    rdfs:comment "Relates an engine unit to its operational time cycles. One engine operates over many time cycles (1:M cardinality)." ;
+    owl:inverseOf cmapss:occursInEngine .
+
+cmapss:occursInEngine a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:TimeCycle ;
+    rdfs:range cmapss:EngineUnit ;
+    rdfs:label "occurs in engine" ;
+    rdfs:comment "Relates a time cycle to the engine in which it occurs (M:1 cardinality)." ;
+    owl:inverseOf cmapss:hasTimeCycle .
+
+cmapss:hasFactRecord a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range cmapss:FactRecord ;
+    rdfs:label "has fact record" ;
+    rdfs:comment "Relates an engine unit to its fact records (observations). One engine generates many fact records (1:M cardinality)." ;
+    owl:inverseOf cmapss:recordsEngine .
+
+cmapss:recordsEngine a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:FactRecord ;
+    rdfs:range cmapss:EngineUnit ;
+    rdfs:label "records engine" ;
+    rdfs:comment "Relates a fact record to the engine it observes (M:1 cardinality)." ;
+    owl:inverseOf cmapss:hasFactRecord .
+
+cmapss:capturedAt a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:FactRecord ;
+    rdfs:range cmapss:TimeCycle ;
+    rdfs:label "captured at" ;
+    rdfs:comment "Relates a fact record to the time cycle at which it was captured. Each fact record corresponds to exactly one time cycle (1:1 cardinality)." ;
+    owl:inverseOf cmapss:hasMeasurement .
+
+cmapss:hasMeasurement a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:TimeCycle ;
+    rdfs:range cmapss:FactRecord ;
+    rdfs:label "has measurement" ;
+    rdfs:comment "Relates a time cycle to its fact record measurement (1:1 cardinality)." ;
+    owl:inverseOf cmapss:capturedAt .
+
+cmapss:hasSensorMeasurement a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:FactRecord ;
+    rdfs:range cmapss:SensorMeasurement ;
+    rdfs:label "has sensor measurement" ;
+    rdfs:comment "Relates a fact record to its collection of sensor readings (21 sensors)." .
+
+cmapss:hasSensorReading a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:SensorMeasurement ;
+    rdfs:range cmapss:SensorReading ;
+    rdfs:label "has sensor reading" ;
+    rdfs:comment "Relates a sensor measurement collection to individual sensor readings." .
+
+cmapss:hasOperationalSetting a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:FactRecord ;
+    rdfs:range cmapss:OperationalSetting ;
+    rdfs:label "has operational setting" ;
+    rdfs:comment "Relates a fact record to its collection of operational settings (3 settings)." .
+
+cmapss:hasOperatingSetting a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:OperationalSetting ;
+    rdfs:range cmapss:OperatingSetting ;
+    rdfs:label "has operating setting" ;
+    rdfs:comment "Relates an operational setting collection to individual setting values." .
+
+cmapss:hasRULTarget a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range cmapss:RULTarget ;
+    rdfs:label "has RUL target" ;
+    rdfs:comment "Relates an engine unit to its remaining useful life target. Only test engines have RUL targets (1:0-or-1 cardinality)." ;
+    owl:inverseOf cmapss:targetForEngine .
+
+cmapss:targetForEngine a rdf:Property , owl:ObjectProperty ;
+    rdfs:domain cmapss:RULTarget ;
+    rdfs:range cmapss:EngineUnit ;
+    rdfs:label "target for engine" ;
+    rdfs:comment "Relates a RUL target to its engine unit." ;
+    owl:inverseOf cmapss:hasRULTarget .
+
+################################################################
+# Datatype Properties (M5: Attributes)
+################################################################
+
+# Dataset Properties
+cmapss:datasetID a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:Dataset ;
+    rdfs:range xsd:string ;
+    rdfs:label "dataset ID" ;
+    rdfs:comment "Unique identifier for the dataset. Domain: {FD001, FD002, FD003, FD004}." .
+
+cmapss:datasetDescription a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:Dataset ;
+    rdfs:range xsd:string ;
+    rdfs:label "dataset description" ;
+    rdfs:comment "Human-readable description of the dataset's experimental configuration." .
+
+cmapss:conditionsCount a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:Dataset ;
+    rdfs:range xsd:integer ;
+    rdfs:label "conditions count" ;
+    rdfs:comment "Number of operating conditions (regimes) in the dataset. Domain: {1, 6}." .
+
+cmapss:faultModesCount a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:Dataset ;
+    rdfs:range xsd:integer ;
+    rdfs:label "fault modes count" ;
+    rdfs:comment "Number of fault modes simulated in the dataset. Domain: {1, 2}." .
+
+cmapss:datasetType a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:Dataset ;
+    rdfs:range xsd:string ;
+    rdfs:label "dataset type" ;
+    rdfs:comment "Type of dataset split. Domain: {train, test}." .
+
+# Engine Unit Properties
+cmapss:globalUnitID a rdf:Property , owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range xsd:string ;
+    rdfs:label "global unit ID" ;
+    rdfs:comment "Globally unique identifier for engine unit. Format: dataset_id + '_' + unit_id (e.g., 'FD001_42'). This is the primary key." .
+
+cmapss:unitID a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range xsd:integer ;
+    rdfs:label "unit ID" ;
+    rdfs:comment "Within-dataset identifier for engine unit. Sequential positive integer." .
+
+cmapss:engineDatasetType a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:EngineUnit ;
+    rdfs:range xsd:string ;
+    rdfs:label "engine dataset type" ;
+    rdfs:comment "Whether engine is in training or test split. Domain: {train, test}." .
+
+# Time Cycle Properties
+cmapss:timeCycles a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:TimeCycle ;
+    rdfs:range xsd:integer ;
+    rdfs:label "time cycles" ;
+    rdfs:comment "Operational cycle number. Sequential positive integer starting from 1." .
+
+cmapss:normalizedCycle a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:TimeCycle ;
+    rdfs:range xsd:double ;
+    rdfs:label "normalized cycle" ;
+    rdfs:comment "Time cycle normalized to [0,1] range for each engine. Calculated as (cycle - min) / (max - min)." .
+
+# Fact Record Properties (Composite Key)
+cmapss:factRecordEngineID a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:FactRecord ;
+    rdfs:range xsd:string ;
+    rdfs:label "fact record engine ID" ;
+    rdfs:comment "Engine identifier for this fact record. Part of composite primary key (global_unit_id, time_cycles)." .
+
+cmapss:factRecordCycle a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:FactRecord ;
+    rdfs:range xsd:integer ;
+    rdfs:label "fact record cycle" ;
+    rdfs:comment "Time cycle for this fact record. Part of composite primary key (global_unit_id, time_cycles)." .
+
+# Sensor Reading Properties
+cmapss:sensorID a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:SensorReading ;
+    rdfs:range xsd:string ;
+    rdfs:label "sensor ID" ;
+    rdfs:comment "Identifier for the sensor. Domain: {sensor_1, sensor_2, ..., sensor_21}." .
+
+cmapss:sensorValue a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:SensorReading ;
+    rdfs:range xsd:double ;
+    rdfs:label "sensor value" ;
+    rdfs:comment "Numeric value of the sensor reading (temperature, pressure, speed, ratio, etc.)." .
+
+cmapss:sensorName a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:SensorReading ;
+    rdfs:range xsd:string ;
+    rdfs:label "sensor name" ;
+    rdfs:comment "Human-readable name of the sensor (e.g., 'Fan inlet temperature', 'LPC outlet temperature')." .
+
+cmapss:sensorUnit a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:SensorReading ;
+    rdfs:range xsd:string ;
+    rdfs:label "sensor unit" ;
+    rdfs:comment "Unit of measurement for the sensor (e.g., '°R', 'psia', 'rpm', 'dimensionless')." .
+
+# Operating Setting Properties
+cmapss:opSettingID a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:OperatingSetting ;
+    rdfs:range xsd:string ;
+    rdfs:label "operating setting ID" ;
+    rdfs:comment "Identifier for the operational setting. Domain: {op_setting_1, op_setting_2, op_setting_3}." .
+
+cmapss:opSettingValue a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:OperatingSetting ;
+    rdfs:range xsd:double ;
+    rdfs:label "operating setting value" ;
+    rdfs:comment "Numeric value of the operational setting parameter." .
+
+# RUL Target Properties
+cmapss:remainingUsefulLife a rdf:Property , owl:DatatypeProperty ;
+    rdfs:domain cmapss:RULTarget ;
+    rdfs:range xsd:integer ;
+    rdfs:label "remaining useful life" ;
+    rdfs:comment "Ground truth number of operational cycles remaining until engine failure. Only available for test engines." .
+
+################################################################
+# Specific Sensor Instances (M5: Sensor Taxonomy)
+################################################################
+
+# Temperature Sensors
+cmapss:Sensor1 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_1" ;
+    cmapss:sensorName "Fan inlet temperature" ;
+    cmapss:sensorUnit "°R" ;
+    rdfs:comment "Temperature at fan inlet (T2)." .
+
+cmapss:Sensor2 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_2" ;
+    cmapss:sensorName "LPC outlet temperature" ;
+    cmapss:sensorUnit "°R" ;
+    rdfs:comment "Low Pressure Compressor outlet temperature (T24)." .
+
+cmapss:Sensor3 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_3" ;
+    cmapss:sensorName "HPC outlet temperature" ;
+    cmapss:sensorUnit "°R" ;
+    rdfs:comment "High Pressure Compressor outlet temperature (T30)." .
+
+cmapss:Sensor4 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_4" ;
+    cmapss:sensorName "LPT outlet temperature" ;
+    cmapss:sensorUnit "°R" ;
+    rdfs:comment "Low Pressure Turbine outlet temperature (T50)." .
+
+# Pressure Sensors
+cmapss:Sensor5 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_5" ;
+    cmapss:sensorName "Fan inlet pressure" ;
+    cmapss:sensorUnit "psia" ;
+    rdfs:comment "Pressure at fan inlet (P2)." .
+
+cmapss:Sensor6 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_6" ;
+    cmapss:sensorName "Bypass-duct pressure" ;
+    cmapss:sensorUnit "psia" ;
+    rdfs:comment "Total pressure in bypass-duct (P15)." .
+
+cmapss:Sensor7 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_7" ;
+    cmapss:sensorName "HPC outlet pressure" ;
+    cmapss:sensorUnit "psia" ;
+    rdfs:comment "Total pressure at HPC outlet (P30)." .
+
+cmapss:Sensor11 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_11" ;
+    cmapss:sensorName "HPC outlet static pressure" ;
+    cmapss:sensorUnit "psia" ;
+    rdfs:comment "Static pressure at HPC outlet (Ps30)." .
+
+# Speed Sensors
+cmapss:Sensor8 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_8" ;
+    cmapss:sensorName "Physical fan speed" ;
+    cmapss:sensorUnit "rpm" ;
+    rdfs:comment "Physical fan speed (Nf)." .
+
+cmapss:Sensor9 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_9" ;
+    cmapss:sensorName "Physical core speed" ;
+    cmapss:sensorUnit "rpm" ;
+    rdfs:comment "Physical core speed (Nc)." .
+
+cmapss:Sensor13 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_13" ;
+    cmapss:sensorName "Corrected fan speed" ;
+    cmapss:sensorUnit "rpm" ;
+    rdfs:comment "Corrected fan speed (NRf)." .
+
+cmapss:Sensor14 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_14" ;
+    cmapss:sensorName "Corrected core speed" ;
+    cmapss:sensorUnit "rpm" ;
+    rdfs:comment "Corrected core speed (NRc)." .
+
+cmapss:Sensor18 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_18" ;
+    cmapss:sensorName "Required fan speed" ;
+    cmapss:sensorUnit "rpm" ;
+    rdfs:comment "Demanded fan speed." .
+
+cmapss:Sensor19 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_19" ;
+    cmapss:sensorName "Required fan conversion speed" ;
+    cmapss:sensorUnit "rpm" ;
+    rdfs:comment "Demanded corrected fan speed." .
+
+# Ratio Sensors
+cmapss:Sensor10 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_10" ;
+    cmapss:sensorName "Engine pressure ratio" ;
+    cmapss:sensorUnit "dimensionless" ;
+    rdfs:comment "Ratio of HPC outlet to fan inlet pressure (P50/P2) - epr." .
+
+cmapss:Sensor12 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_12" ;
+    cmapss:sensorName "Fuel flow to Ps30 ratio" ;
+    cmapss:sensorUnit "pps/psi" ;
+    rdfs:comment "Ratio of fuel flow to HPC outlet static pressure (Wf/Ps30) - phi." .
+
+cmapss:Sensor15 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_15" ;
+    cmapss:sensorName "Bypass ratio" ;
+    cmapss:sensorUnit "dimensionless" ;
+    rdfs:comment "Bypass ratio (BPR)." .
+
+cmapss:Sensor16 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_16" ;
+    cmapss:sensorName "Burner fuel-air ratio" ;
+    cmapss:sensorUnit "dimensionless" ;
+    rdfs:comment "Burner fuel-air ratio (farB)." .
+
+# Flow Sensors
+cmapss:Sensor17 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_17" ;
+    cmapss:sensorName "Bleed enthalpy" ;
+    cmapss:sensorUnit "dimensionless" ;
+    rdfs:comment "Bleed enthalpy (htBleed)." .
+
+cmapss:Sensor20 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_20" ;
+    cmapss:sensorName "HPT cool air flow" ;
+    cmapss:sensorUnit "lbm/s" ;
+    rdfs:comment "High-pressure turbine cool air flow (W31)." .
+
+cmapss:Sensor21 a cmapss:SensorReading ;
+    cmapss:sensorID "sensor_21" ;
+    cmapss:sensorName "LPT cool air flow" ;
+    cmapss:sensorUnit "lbm/s" ;
+    rdfs:comment "Low-pressure turbine cool air flow (W32)." .
+
+################################################################
+# Dataset Instances
+################################################################
+
+cmapss:FD001 a cmapss:Dataset ;
+    cmapss:datasetID "FD001" ;
+    cmapss:datasetDescription "Train on FD001 (1 operating condition, 1 fault mode: HPC Degradation)" ;
+    cmapss:conditionsCount 1 ;
+    cmapss:faultModesCount 1 ;
+    rdfs:comment "Simplest dataset with single operating condition and single fault mode." .
+
+cmapss:FD002 a cmapss:Dataset ;
+    cmapss:datasetID "FD002" ;
+    cmapss:datasetDescription "Train on FD002 (6 operating conditions, 1 fault mode: HPC Degradation)" ;
+    cmapss:conditionsCount 6 ;
+    cmapss:faultModesCount 1 ;
+    rdfs:comment "Multiple operating conditions with single fault mode." .
+
+cmapss:FD003 a cmapss:Dataset ;
+    cmapss:datasetID "FD003" ;
+    cmapss:datasetDescription "Train on FD003 (1 operating condition, 2 fault modes: HPC & Fan Degradation)" ;
+    cmapss:conditionsCount 1 ;
+    cmapss:faultModesCount 2 ;
+    rdfs:comment "Single operating condition with multiple fault modes." .
+
+cmapss:FD004 a cmapss:Dataset ;
+    cmapss:datasetID "FD004" ;
+    cmapss:datasetDescription "Train on FD004 (6 operating conditions, 2 fault modes: HPC & Fan Degradation)" ;
+    cmapss:conditionsCount 6 ;
+    cmapss:faultModesCount 2 ;
+    rdfs:comment "Most complex dataset with multiple conditions and multiple fault modes." .
+
+################################################################
+# Functional Dependencies (M3: Constraints as OWL Axioms)
+################################################################
+
+# FD1: dataset_id → (conditions_count, fault_modes_count, dataset_description)
+# Represented by owl:FunctionalProperty on dataset attributes
+
+# FD2: global_unit_id → (unit_id, dataset_id, dataset_type)
+# Represented by owl:FunctionalProperty on cmapss:globalUnitID
+
+# FD3: (global_unit_id, time_cycles) → (sensor_1...sensor_21, op_setting_1-3)
+# Represented by composite key in cmapss:FactRecord
+
+################################################################
+# End of Ontology
+################################################################

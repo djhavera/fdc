@@ -1,0 +1,69 @@
+# CS598 FDC - C-MAPSS Predictive Maintenance Pipeline
+
+# ============================================================
+# Core Data Processing
+# ============================================================
+pandas>=2.0.0         # DataFrame operations, CSV I/O
+numpy>=1.24.0         # Numerical computations, array operations
+
+# ============================================================
+# Data Visualization
+# ============================================================
+matplotlib>=3.7.0     # Base plotting library
+seaborn>=0.12.0       # Statistical visualizations
+
+# ============================================================
+# Machine Learning & Statistical Analysis
+# ============================================================
+scikit-learn>=1.3.0   # ML algorithms (StandardScaler, LOF, IsolationForest, MinCovDet, DBSCAN)
+scipy>=1.11.0         # Statistical functions (chi2, spatial distances, stats)
+
+# ============================================================
+# MLOps & Experiment Tracking
+# ============================================================
+wandb>=0.16.0         # Weights & Biases for artifact lineage and experiment tracking
+nbformat>=5.9.0       # Required for W&B notebook history tracking
+
+# ============================================================
+# Data Version Control
+# ============================================================
+dvc>=3.0.0            # Data Version Control for dataset tracking
+dvc-gdrive>=2.20.0    # Google Drive remote storage support for DVC (optional)
+
+# ============================================================
+# Jupyter Environment
+# ============================================================
+jupyter>=1.0.0        # Jupyter notebook interface
+notebook>=7.0.0       # Jupyter notebook server
+ipykernel>=6.25.0     # IPython kernel for Jupyter
+
+# ============================================================
+# Python Standard Library (No installation needed)
+# ============================================================
+# os                  # File system operations
+# warnings            # Warning control
+# pathlib             # Object-oriented filesystem paths
+# typing              # Type hints (Dict, List, Tuple, Optional)
+# logging             # Logging framework
+# datetime            # Date and time operations
+# hashlib             # Cryptographic hashing (used in DVC examples)
+# subprocess          # Process execution (used in DVC commands)
+
+# ============================================================
+# Development Tools (Optional - Uncomment if needed)
+# ============================================================
+# black>=23.0.0       # Code formatting
+# flake8>=6.0.0       # Linting
+# pytest>=7.4.0       # Testing framework
+# mypy>=1.5.0         # Static type checking
+
+# ============================================================
+# Installation Instructions
+# ============================================================
+# pip install -r requirements.txt
+#
+# For exact reproducibility, generate a lock file:
+# pip freeze > requirements-lock.txt
+#
+# Tested with Python 3.8+ on macOS
+# Minimum Python version: 3.8 (required for typing features)
