@@ -33,6 +33,7 @@ Transform NASA's C-MAPSS turbofan engine dataset from raw sensor readings into a
 ### 2. Data Cleaning (Section 3)
 - **Outlier Detection** (M6): Z-score, Hampel, Isolation Forest, LOF, Mahalanobis (5-method consensus)
 - **Deduplication** (M6): Remove exact and entity-level duplicates across sensor readings
+- **Data Transformation** (M12)
 - **Data Version Control** (M9, M15): DVC tracking with MD5 hashes for 4 pipeline stages
 
 ### 3. MLOps Integration
