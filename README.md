@@ -39,7 +39,7 @@ Transform NASA's C-MAPSS turbofan engine dataset from raw sensor readings into a
 ### 3. MLOps Integration
 - **DVC**: Version control for datasets (CSV files tracked via `.dvc` files)
 - **Weights & Biases**: Experiment tracking, artifact lineage, 114 logged metrics
-- **Public Dashboard**: [wandb.ai/djhavera-aviationscience/cmapss-data-loading](https://wandb.ai/djhavera-aviationscience/cmapss-data-loading)
+- **Public Dashboard**: [wandb.ai/djhavera-aviationscience/cmapss-data-loading](https://wandb.ai/djhavera/cmapss-data-curation/runs/rogmaq0o?nw=nwuserdjhavera)
 
 ## Repository Structure
 
