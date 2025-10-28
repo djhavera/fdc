@@ -1,5 +1,9 @@
 # Data files
 *.pdf
+# Exception: Allow specific diagram PDFs and project documentation
+!aws_mlops_mapping.pdf
+!hybrid_architecture_diagram.pdf
+!Final_Project_CS598_FDC_Havera_10_28.pdf
 *.dat
 *.csv
 *.parquet
